@@ -1,0 +1,78 @@
+# Parameters
+project: 'runs/yolov5'
+adam: False
+epochs: 300
+weights: ''
+prune_finetune: False
+hyp:
+  lr0: 0.01
+  hsv_h: 0.015
+  hsv_s: 0.7
+  hsv_v: 0.4
+  lrf: 0.01
+
+Model:
+  # depth_multiple: 1.00  # model depth multiple
+  # width_multiple: 1.00  # layer channel multiple
+  depth_multiple: 0.33  # model depth multiple
+  width_multiple: 0.50  # layer channel multiple
+  Backbone: 
+    name: 'YoloV5'
+    activation: 'SiLU'
+  Neck: 
+    name: 'YoloV5' 
+    in_channels: [256, 512, 1024]
+    out_channels: [256, 512, 1024]
+    activation: 'SiLU'
+  Head: 
+    name: 'YoloV5'
+    activation: 'SiLU'
+  anchors: [[10,13, 16,30, 33,23],[30,61, 62,45, 59,119],[116,90, 156,198, 373,326]]  # P5/32]
+Loss:
+  type: 'ComputeLoss'
+
+Dataset:
+  data_name: 'group1'
+  train: data/group1/group1_train.txt  # 118287 images
+  val: data/group1/group1_val.txt  # 5000 images
+  test: data/group1/group1_val.txt # 20288 of 40670 images, submit to https://competitions.codalab.org/competitions/20794^
+  nc: 17  # number of classes
+  np: 0 #number of keypoints
+  names:
+  - PASS
+  - CM
+  - SB
+  - IS
+  - IC
+  - MC
+  - FS
+  - DC
+  - SG
+  - FM
+  - INR
+  - DM
+  - EXS
+  - PS
+  - DOUJIAN
+  - DUOJIAN
+  - PL
+  img_size: 640
+  batch_size: 128
+  # names:
+  #   0: PASS
+  #   1: CM
+  #   2: SB
+  #   3: IS
+  #   4: IC
+  #   5: MC
+  #   6: FS
+  #   7: DC
+  #   8: SG
+  #   9: FM
+  #   10: INR
+  #   11: DM
+  #   12: EXS
+  #   13: PS
+  #   14: DOUJIAN
+  #   15: DUOJIAN
+  #   16: PL

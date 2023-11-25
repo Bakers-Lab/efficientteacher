@@ -63,7 +63,8 @@ class YOLOAnchorAssigner(nn.Module):
                             # [1, 1], [1, -1], [-1, 1], [-1, -1],  # jk,jm,lk,lm
                             ], device=targets.device).float() * g  # offsets
         for i in range(self.nl):
-            anchors = self.anchors[i]
+            # anchors = self.anchors[i]
+            anchors, shape = self.anchors[i], p[i].shape 
             gain[2:6] = torch.tensor(p[i].shape)[[3, 2, 3, 2]]  # xyxy gain
             gain_list = [3,2]*npoint                            # landmarks 10
             gain[6: 6+(npoint*2)] = torch.tensor(p[i].shape)[gain_list]  # xyxy gain
@@ -88,7 +89,8 @@ class YOLOAnchorAssigner(nn.Module):
             gij = (gxy - offsets).long()
             gi, gj = gij.T  # grid xy indices
             a = t[:, npoint*2+6].long()  # anchor indices
-            indices.append((b, a, gj.clamp_(0, gain[3] - 1), gi.clamp_(0, gain[2] - 1)))  # image, anchor, grid indices
+            # indices.append((b, a, gj.clamp_(0, gain[3] - 1), gi.clamp_(0, gain[2] - 1)))  # image, anchor, grid indices
+            indices.append((b, a, gj.clamp_(0, shape[2] - 1), gi.clamp_(0, shape[3] - 1)))  # image, anchor, grid
             tbox.append(torch.cat((gxy - gij, gwh), 1))  # box
             anch.append(anchors[a])  # anchors
             tcls.append(c)  # class
@@ -278,7 +280,8 @@ class YOLOAnchorAssigner(nn.Module):
                             ], device=targets.device).float() * g  # offsets
 
         for i in range(self.nl):
-            anchors = self.anchors[i]
+            # anchors = self.anchors[i]
+            anchors, shape = self.anchors[i], p[i].shape 
             gain[2:6] = torch.tensor(p[i].shape)[[3, 2, 3, 2]]  # xyxy gain
 
             # Match targets to anchors
@@ -311,7 +314,8 @@ class YOLOAnchorAssigner(nn.Module):
 
             # Append
             a = t[:, 6].long()  # anchor indices
-            indices.append((b, a, gj.clamp_(0, gain[3] - 1), gi.clamp_(0, gain[2] - 1)))  # image, anchor, grid indices
+            # indices.append((b, a, gj.clamp_(0, gain[3] - 1), gi.clamp_(0, gain[2] - 1)))  # image, anchor, grid indices
+            indices.append((b, a, gj.clamp_(0, shape[2] - 1), gi.clamp_(0, shape[3] - 1)))  # image, anchor, grid
             anch.append(anchors[a])  # anchors
 
         return indices, anch
@@ -331,7 +335,8 @@ class YOLOAnchorAssigner(nn.Module):
                             ], device=targets.device).float() * g  # offsets
 
         for i in range(self.nl):
-            anchors = self.anchors[i]
+            # anchors = self.anchors[i]
+            anchors, shape = self.anchors[i], p[i].shape 
             gain[2:6] = torch.tensor(p[i].shape)[[3, 2, 3, 2]]  # xyxy gain
 
             # Match targets to anchors
@@ -364,7 +369,8 @@ class YOLOAnchorAssigner(nn.Module):
 
             # Append
             a = t[:, 6].long()  # anchor indices
-            indices.append((b, a, gj.clamp_(0, gain[3] - 1), gi.clamp_(0, gain[2] - 1)))  # image, anchor, grid indices
+            # indices.append((b, a, gj.clamp_(0, gain[3] - 1), gi.clamp_(0, gain[2] - 1)))  # image, anchor, grid indices
+            indices.append((b, a, gj.clamp_(0, shape[2] - 1), gi.clamp_(0, shape[3] - 1)))  # image, anchor, grid
             tbox.append(torch.cat((gxy - gij, gwh), 1))  # box
             anch.append(anchors[a])  # anchors
             tcls.append(c)  # class
@@ -547,7 +553,8 @@ class YOLOAnchorAssigner(nn.Module):
                             ], device=targets.device).float() * g  # offsets
 
         for i in range(self.nl):
-            anchors = self.anchors[i]
+            # anchors = self.anchors[i]
+            anchors, shape = self.anchors[i], p[i].shape 
             gain[2:6] = torch.tensor(p[i].shape)[[3, 2, 3, 2]]  # xyxy gain
 
             # Match targets to anchors
@@ -581,7 +588,8 @@ class YOLOAnchorAssigner(nn.Module):
             # Append
             a = t[:, 7].long()  # anchor indices
             score = t[:, 6].T
-            indices.append((b, a, gj.clamp_(0, gain[3] - 1), gi.clamp_(0, gain[2] - 1)))  # image, anchor, grid indices
+            # indices.append((b, a, gj.clamp_(0, gain[3] - 1), gi.clamp_(0, gain[2] - 1)))  # image, anchor, grid indices
+            indices.append((b, a, gj.clamp_(0, shape[2] - 1), gi.clamp_(0, shape[3] - 1)))  # image, anchor, grid
             anch.append(anchors[a])  # anchors
             tscore.append(score)
             # print('score:', score)
@@ -606,7 +614,8 @@ class YOLOAnchorAssigner(nn.Module):
                             ], device=targets.device).float() * g  # offsets
        
         for i in range(self.nl):
-            anchors = self.anchors[i].to(targets.device)
+            # anchors = self.anchors[i].to(targets.device)
+            anchors, shape = self.anchors[i].to(targets.device), p[i].shape
             gain[2:6] = torch.tensor(p[i].shape)[[3, 2, 3, 2]]  # xyxy gain
             t = targets * gain
             if nt:
@@ -630,7 +639,8 @@ class YOLOAnchorAssigner(nn.Module):
             # Append
             a = t[:, 6].long()  # anchor indices
             # a = t[:, 7].long()  # anchor indices
-            indices.append((b, a, gj.clamp_(0, gain[3] - 1), gi.clamp_(0, gain[2] - 1)))  # image, anchor, grid indices
+            # indices.append((b, a, gj.clamp_(0, gain[3] - 1), gi.clamp_(0, gain[2] - 1)))  # image, anchor, grid indices
+            indices.append((b, a, gj.clamp_(0, shape[2] - 1), gi.clamp_(0, shape[3] - 1)))  # image, anchor, grid
             tbox.append(torch.cat((gxy - gij, gwh), 1))  # box
             anch.append(anchors[a])  # anchors
             tcls.append(c)  # class
@@ -654,7 +664,8 @@ class YOLOAnchorAssigner(nn.Module):
                             ], device=targets.device).float() * g  # offsets
        
         for i in range(self.nl):
-            anchors = self.anchors[i].to(targets.device)
+            # anchors = self.anchors[i].to(targets.device)
+            anchors, shape = self.anchors[i].to(targets.device), p[i].shape
             gain[2:6] = torch.tensor(p[i].shape)[[3, 2, 3, 2]]  # xyxy gain
             t = targets * gain
             if nt:
@@ -688,7 +699,8 @@ class YOLOAnchorAssigner(nn.Module):
             # a = t[:, 6].long()  # anchor indices
             a = t[:, 7].long()  # anchor indices
             score = t[:,6].T
-            indices.append((b, a, gj.clamp_(0, gain[3] - 1), gi.clamp_(0, gain[2] - 1)))  # image, anchor, grid indices
+            # indices.append((b, a, gj.clamp_(0, gain[3] - 1), gi.clamp_(0, gain[2] - 1)))  # image, anchor, grid indices
+            indices.append((b, a, gj.clamp_(0, shape[2] - 1), gi.clamp_(0, shape[3] - 1)))  # image, anchor, grid
             tbox.append(torch.cat((gxy - gij, gwh), 1))  # box
             anch.append(anchors[a])  # anchors
             tcls.append(c)  # class

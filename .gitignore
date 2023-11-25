@@ -131,3 +131,6 @@ work_dirs/
 
 custom_configs
 runs
+example
+wandb
+yolov5_ssod
