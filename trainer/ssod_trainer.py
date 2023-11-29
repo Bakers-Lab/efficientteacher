@@ -584,7 +584,7 @@ class SSODTrainer(Trainer):
                 raise NotImplementedError
             return sup_pred, sup_feature, un_sup_pred, un_sup_feature
     
-    def train_instance(self, imgs, targets, paths, unlabeled_imgs, unlabeled_imgs_ori, unlabeled_gt, unlabeled_M, ni, pbar, callbacks):
+    def train_instance(self, imgs, targets, paths, unlabeled_imgs, unlabeled_imgs_ori, unlabeled_gt, unlabeled_M, ni, pbar, target_paths, callbacks):
         n_img, _, _, _ = imgs.shape
         n_pse_img, _,_,_ = unlabeled_imgs.shape
         invalid_target_shape = True
@@ -615,7 +615,9 @@ class SSODTrainer(Trainer):
         elif len(self.extra_teacher_models) == 0 :
             if self.cfg.SSOD.pseudo_label_type == 'LabelMatch':
                 self.pseudo_label_creator.update(targets, n_img, n_pse_img)
-            unlabeled_targets, invalid_target_shape = self.pseudo_label_creator.create_pseudo_label_online_with_gt(teacher_pred, copy.deepcopy(unlabeled_imgs), unlabeled_M, copy.deepcopy(unlabeled_imgs_ori), unlabeled_gt, self.RANK)
+            str_id_mapping={value: index for index, value in enumerate(self.cfg['Dataset']['names'])}
+            unlabeled_targets, invalid_target_shape = self.pseudo_label_creator.create_pseudo_label_online_with_gt_with_img_filter(
+                teacher_pred, copy.deepcopy(unlabeled_imgs), unlabeled_M, copy.deepcopy(unlabeled_imgs_ori), unlabeled_gt, self.RANK,tar_path=target_paths,str_id_mapping=str_id_mapping)
             unlabeled_imgs = unlabeled_imgs.to(self.device)
         else:    
             raise NotImplementedError
@@ -694,7 +696,7 @@ class SSODTrainer(Trainer):
                 imgs = imgs.to(self.device, non_blocking=True).float() / 255.0 
                 target_imgs = target_imgs.to(self.device, non_blocking=True).float() / 255.0 
                 target_imgs_ori = target_imgs_ori.to(self.device, non_blocking=True).float() / 255.0 
-                self.train_instance(imgs, targets, paths, target_imgs, target_imgs_ori, target_gt, target_M, ni, pbar, callbacks)
+                self.train_instance(imgs, targets, paths, target_imgs, target_imgs_ori, target_gt, target_M, ni, pbar,target_paths, callbacks)
         else:
             pbar = enumerate(self.train_loader)
             if self.RANK in [-1, 0]:
@@ -706,7 +708,7 @@ class SSODTrainer(Trainer):
                 imgs = imgs.to(self.device, non_blocking=True).float() / 255.0 
                 target_imgs = target_imgs.to(self.device, non_blocking=True).float() / 255.0 
                 target_imgs_ori = target_imgs_ori.to(self.device, non_blocking=True).float() / 255.0 
-                self.train_instance(imgs, targets, paths, target_imgs, target_imgs_ori, target_gt, target_M, ni, pbar, callbacks)
+                self.train_instance(imgs, targets, paths, target_imgs, target_imgs_ori, target_gt, target_M, ni, pbar,target_paths, callbacks)
             
         # end batch ------------------------------------------------------------------------------------------------
         

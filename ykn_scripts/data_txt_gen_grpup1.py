@@ -14,16 +14,21 @@ def get_args():
     # yolo dir指的是存放原始的文件的
     parser = argparse.ArgumentParser(description="Execute yolov5 dataset spliting parameters")
     # parser.add_argument("--yolo-dir", type=str, default="/archive/hot4/ykn/dataset/0914BKS")
-    parser.add_argument("--yolo-dir", type=str, default="/home/ykn@corp.sse.tongji.edu.cn/efficientteacher/data/quexian_all")
-    # parser.add_argument("--yolo-dir", type=str, default="/home/ykn@corp.sse.tongji.edu.cn/efficientteacher/data/group1/Data_20231101")
+    # parser.add_argument("--yolo-dir", type=str, default="/home/ykn@corp.sse.tongji.edu.cn/efficientteacher/data/quexian_all")
+    parser.add_argument("--yolo-dir", type=str, default="/archive/hot4/ykn/dataset/Group_label_path")
 
-    parser.add_argument("--yolo-txt", type=str, default="./data/group1/group1_unlabelled_only_is.txt")
+    # parser.add_argument("--yolo-dir", type=str, default="/home/ykn@corp.sse.tongji.edu.cn/efficientteacher/data/group1/Data_20231101")
+    # parser.add_argument("--yolo-txt", type=str, default="./data/group1/group1_unlabelled_only_is.txt")
+    parser.add_argument("--yolo-txt", type=str, default="./data/GROUP47/group47_unlabelled.txt")
+
     parser.add_argument("--label", type=str, default="false")
     parser.add_argument("--expect",type=str, default="Group_1")
 
     return parser.parse_args()
 
 
+labels=["PASS","MC","CM","IC","FM","IS","PL","DC"]
+labels=set(labels)
 
 # 获取其他的group的数据做成unlabelled的txt
 def gen_unlabelled_txt(folder_path,file_txt):
@@ -32,8 +37,9 @@ def gen_unlabelled_txt(folder_path,file_txt):
     if os.path.exists(folder_path) and os.path.isdir(folder_path):
         for root, dirs, files in os.walk(folder_path):
             for file_name in files:
+                label_str=root.split('/')[-1]
                 file_path = os.path.join(root, file_name)
-                if '.jpg' in file_path and 'IS' in file_path:
+                if '.jpg' in file_path and label_str in labels:
                     images.append(file_path)
     
 

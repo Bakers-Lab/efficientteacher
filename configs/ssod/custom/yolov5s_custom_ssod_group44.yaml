@@ -42,31 +42,22 @@ Loss:
   type: 'ComputeLoss'
 
 Dataset:
-  data_name: 'group1'
-  train: data/group1/group1_train.txt  # 118287 images
-  val: data/group1/group1_val.txt  # 5000 images
-  test: data/group1/group1_val.txt # 20288 of 40670 images, submit to https://competitions.codalab.org/competitions/20794^
-  target: data/group1/group1_unlabelled_3k.txt
-  nc: 17  # number of classes
+  data_name: 'GROUP44'
+  train: data/GROUP44/group44_train.txt  # 118287 images
+  val: data/GROUP44/group44_test.txt  # 5000 images
+  test: data/GROUP44/group44_test.txt # 20288 of 40670 images, submit to https://competitions.codalab.org/competitions/20794^
+  target: data/GROUP44/unlabelled.txt
+  nc: 8  # number of classes
   np: 0 #number of keypoints
   names:
   - PASS
-  - CM
-  - SB
   - IS
-  - IC
+  - SB
+  - CM
   - MC
-  - FS
-  - DC
-  - SG
   - FM
-  - INR
-  - DM
-  - EXS
-  - PS
-  - DOUJIAN
-  - DUOJIAN
-  - PL
+  - DC
+  - FS
   img_size: 640
   batch_size: 32
 
@@ -105,22 +96,3 @@ SSOD:
     scale: 0.8
     degrees: 0.0
     shear: 0.0
-
-#   names:
-    # 0: PASS
-    # 1: CM
-    # 2: SB
-    # 3: IS
-    # 4: IC
-    # 5: MC
-    # 6: FS
-    # 7: DC
-    # 8: SG
-    # 9: FM
-    # 10: INR
-    # 11: DM
-    # 12: EXS
-    # 13: PS
-    # 14: DOUJIAN
-    # 15: DUOJIAN
-    # 16: PL

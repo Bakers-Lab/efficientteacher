@@ -13,9 +13,12 @@ import yaml
 def get_args():
     # yolo dir指的是存放原始的文件的
     parser = argparse.ArgumentParser(description="Execute yolov5 dataset spliting parameters")
-    parser.add_argument("--yolo-dir", type=str, default="/archive/hot4/ykn/dataset/0914BKS")
-    parser.add_argument("--yolo-txt", type=str, default="./data/group1/group1_unlabelled.txt")
-    parser.add_argument("--label", type=str, default="false")
+    # parser.add_argument("--yolo-dir", type=str, default="/archive/hot4/ykn/dataset/0914BKS")
+    # parser.add_argument("--yolo-txt", type=str, default="./data/group1/group1_unlabelled.txt")
+    
+    parser.add_argument("--yolo-dir", type=str, default="/home/ykn@corp.sse.tongji.edu.cn/efficientteacher/data/GROUP47/test")
+    parser.add_argument("--yolo-txt", type=str, default="./data/GROUP47/group47_val.txt")
+    parser.add_argument("--label", type=str, default="true")
     parser.add_argument("--expect",type=str, default="Group_1")
 
     return parser.parse_args()

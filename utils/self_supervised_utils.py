@@ -245,6 +245,69 @@ class FairPseudoLabel:
         return target_out_targets_perspective, invalid_target_shape
 
 
+    def create_pseudo_label_online_with_gt_with_img_filter(self, out, target_imgs, M_s, target_imgs_ori, gt=None, RANK=-2,tar_path=None,str_id_mapping=None):
+        n_img, _, height, width = target_imgs.shape  # batch size, channels, height, width
+        lb = []
+      
+        target_out_targets_perspective = []
+        invalid_target_shape = True
+        out = non_max_suppression_ssod(out, conf_thres=self.nms_conf_thres, iou_thres=self.nms_iou_thres, \
+                                       num_points=self.num_points, multi_label=self.multi_label, labels=lb)
+        out = [out_tensor.detach() for out_tensor in out]
+        target_out_np = output_to_target_ssod(out)
+        target_out_targets = torch.tensor(target_out_np)
+        target_shape = target_out_targets.shape
+
+        if(target_shape[0] > 0 and target_shape[1] > 6):
+            for i, img in enumerate(target_imgs_ori):
+                # image_targets = target_out_targets[target_out_targets[:, 0] == i]
+                image_targets = target_out_np[target_out_np[:, 0] == i]
+                if isinstance(image_targets, torch.Tensor):
+                    image_targets = image_targets.cpu().numpy()
+                image_targets[:, 2:6] = xywh2xyxy(image_targets[:, 2:6])
+                M_select = M_s[M_s[:, 0] == i, :]  # image targets
+                M = M_select[0][1:10].reshape([3,3]).cpu().numpy()
+                s = float(M_select[0][10])
+                ud = int(M_select[0][11])
+                lr = int(M_select[0][12])
+                img, image_targets_random = online_label_transform(img, copy.deepcopy(image_targets[:, 1:]),  M, s)
+               
+                image_targets = np.array(image_targets_random)
+                if image_targets.shape[0] != 0:
+                    image_targets = np.concatenate((np.array(np.ones([image_targets.shape[0], 1]) * i), np.array(image_targets)), 1)
+                    image_targets[:, 2:6] = xyxy2xywh(image_targets[:, 2:6])  # convert xyxy to xywh
+                    image_targets[:, [3, 5]] /= height # normalized height 0-1
+                    image_targets[:, [2, 4]] /= width # normalized width 0-1
+                    if ud == 1:
+                        image_targets[:, 3] = 1 - image_targets[:, 3]
+                    if lr == 1:
+                        image_targets[:, 2] = 1 - image_targets[:, 2]
+                        
+                    # 通过 tar_path 路径中的标签类型改写标签
+                    pic_label_str=tar_path[i].split('/')[-2].upper()
+                    # 替换标签(不推荐)
+                    # image_targets[:,1]=str_id_mapping[pic_label_str]
+                    # 过滤标签
+                    image_targets=image_targets[image_targets[:,1]==str_id_mapping[pic_label_str]]
+                    
+                    target_out_targets_perspective.extend(image_targets.tolist())
+            target_out_targets_perspective = torch.from_numpy(np.array(target_out_targets_perspective))
+        # img_list = torch.stack(img_list, 0)
+        # if self.RANK in [-1, 0]:
+            # print('total time cost:', time_sync() - total_t1)
+
+        if target_shape[0] > 0 and len(target_out_targets_perspective) > 0 :
+           invalid_target_shape = False
+           if self.debug:
+              if RANK in [-1 ,0]:
+                draw_image = plot_images_ssod(copy.deepcopy(target_imgs), target_out_targets_perspective, fname='/mnt/bowen/EfficientTeacher/effcient_teacher_pseudo_label.jpg', names=self.names)            
+                draw_image = plot_images(copy.deepcopy(target_imgs), gt, fname='/mnt/bowen/EfficientTeacher/effcient_teacher_gt.jpg', names=self.names)            
+                    # raise 0
+
+        return target_out_targets_perspective, invalid_target_shape
+
+
+
  #build pseudo label via pred from teacher model
     def create_pseudo_label_online_with_extra_teachers(self, out, extra_teacher_outs, target_imgs, M_s, \
      extra_teacher_class_idxs, RANK):
