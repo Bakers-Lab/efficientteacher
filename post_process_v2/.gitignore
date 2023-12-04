@@ -1,0 +1,6 @@
+config/
+sql/
+
+env.py
+test/*
+

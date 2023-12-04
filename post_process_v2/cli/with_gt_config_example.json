@@ -1,0 +1,11 @@
+{
+    "label_id_name_dict": {
+        "0": "PASS",
+        "1": "MC",
+        "2": "CM"
+    },
+    "gt_csv_path": "./data/gt_enhance_yolo.txt",
+    "op_csv_path": "./data/pred_enhance_yolo.txt",
+    "export_dir": "./data/cli-export_optimize",
+    "pass_label_name": "PASS"
+}

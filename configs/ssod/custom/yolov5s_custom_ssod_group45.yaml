@@ -43,10 +43,10 @@ Loss:
 
 Dataset:
   data_name: 'GROUP44'
-  train: data/GROUP44/group44_train.txt  # 118287 images
-  val: data/GROUP44/group44_test.txt  # 5000 images
-  test: data/GROUP44/group44_test.txt # 20288 of 40670 images, submit to https://competitions.codalab.org/competitions/20794^
-  target: data/GROUP44/group44_unlabelled.txt
+  train: data/GROUP44/group45_train.txt  # 118287 images
+  val: data/GROUP44/group45_test.txt  # 5000 images
+  test: data/GROUP44/group45_test.txt # 20288 of 40670 images, submit to https://competitions.codalab.org/competitions/20794^
+  target: data/GROUP44/unlabelled.txt
   nc: 8  # number of classes
   np: 0 #number of keypoints
   names:

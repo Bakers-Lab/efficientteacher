@@ -1,0 +1,13 @@
+{
+    "label_id_name_dict": {
+        "0": "U_FM",
+        "1": "U_CM",
+        "2": "U_PL",
+        "3": "U_MC",
+        "4": "U_PASS",
+        "5": "U_OTHER"
+    },
+    "op_csv_path": "/remote/avi/post_process_data_20230211/import/data/op.txt",
+    "threshold_dir": "/remote/avi/post_process_data_20230211/import/parameters",
+    "export_dir": "/remote/avi/post_process_data_20230211/cli-export-without_gt"
+}

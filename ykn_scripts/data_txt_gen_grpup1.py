@@ -19,7 +19,7 @@ def get_args():
 
     # parser.add_argument("--yolo-dir", type=str, default="/home/ykn@corp.sse.tongji.edu.cn/efficientteacher/data/group1/Data_20231101")
     # parser.add_argument("--yolo-txt", type=str, default="./data/group1/group1_unlabelled_only_is.txt")
-    parser.add_argument("--yolo-txt", type=str, default="./data/GROUP47/group47_unlabelled.txt")
+    parser.add_argument("--yolo-txt", type=str, default="./data/GROUP44/group44_unlabelled.txt")
 
     parser.add_argument("--label", type=str, default="false")
     parser.add_argument("--expect",type=str, default="Group_1")
@@ -27,7 +27,7 @@ def get_args():
     return parser.parse_args()
 
 
-labels=["PASS","MC","CM","IC","FM","IS","PL","DC"]
+labels=["PASS","IS","SB","CM","MC","FM","DC","FS"]
 labels=set(labels)
 
 # 获取其他的group的数据做成unlabelled的txt
